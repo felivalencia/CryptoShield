@@ -77,6 +77,46 @@ tiApiController.completeCoinMiddleware = async (req, res, next) => {
   }
 };
 
+/*
+// middleware to retrieve complete data for 2 coins from TI API when coin IDs are input through the front end
+tiApiController.completeCoinMiddleware = async (req, res, next) => {
+  // destructure ids from req.params
+  const { id1, id2 } = req.params; // Assuming the route is /compare/:id1/:id2
+
+  // fetch data
+  const fetchCoinData = async (id) => {
+    const options = {
+      method: 'GET',
+      url: `https://api.tokeninsight.com/api/v1/coins/${id}`,
+      headers: { accept: 'application/json', TI_API_KEY: 'c8c0fd6ddc4f487291887853c5a5dc92' },
+    };
+    const response = await axios.request(options);
+    return response.data;
+  };
+
+  try {
+    // fetch both coins 
+    const [coin1Data, coin2Data] = await Promise.all([fetchCoinData(id1), fetchCoinData(id2)]);
+    
+    // Store both coins' data in res.locals
+    res.locals.completeCoins = {
+      coin1: coin1Data,
+      coin2: coin2Data
+    };
+
+    console.log('res.locals: ', res.locals);
+    return next();
+  } catch (error) {
+    console.error(`Error fetching complete data for coins ${id1} and ${id2}:`, error.response ? error.response.data : error.message);
+    return next({
+      log: 'Express error handler caught error in completeCoinMiddleware',
+      status: 500,
+      message: { err: error.response ? error.response.data : error.message }
+    });
+  }
+};
+*/ 
+
 // middleware to a single coin's historical price data from TI API when coin ID is input through front end
 tiApiController.historyCoinMiddleware = async (req, res, next) => { // rename variable to reflect we aren't just fetching for 1d
   const { id } = req.params;
@@ -105,5 +145,46 @@ tiApiController.historyCoinMiddleware = async (req, res, next) => { // rename va
     });
   }
 };
+
+/*
+// middleware to fetch historical price data for multiple coins from TI API when coin IDs are input through the front end
+tiApiController.historyCoinMiddleware = async (req, res, next) => {
+  const { id1, id2 } = req.params; // Assuming the route is /compare/:id1/:id2
+  const { interval, length } = req.query; // Get interval and length from query parameters
+
+  // Utility function to fetch historical data
+  const fetchCoinHistory = async (id) => {
+    const options = {
+      method: 'GET',
+      url: `https://api.tokeninsight.com/api/v1/history/coins/${id}?interval=${interval}&length=${length}`,
+      headers: { accept: 'application/json', TI_API_KEY: 'c8c0fd6ddc4f487291887853c5a5dc92' },
+    };
+    const response = await axios.request(options);
+    response.data.data.market_chart.reverse();
+    return response.data.data;
+  };
+
+  try {
+    // Parallel requests for historical data of both coins
+    const [history1, history2] = await Promise.all([fetchCoinHistory(id1), fetchCoinHistory(id2)]);
+    
+    // Store both coins' historical data in res.locals
+    res.locals.histories = {
+      coin1: history1,
+      coin2: history2
+    };
+
+    console.log('res.locals: ', res.locals);
+    return next();
+  } catch (error) {
+    console.error(`Error fetching historical data for coins ${id1} and ${id2}:`, error.response ? error.response.data : error.message);
+    return next({
+      log: 'Express error handler caught error in historyCoinMiddleware',
+      status: 500,
+      message: { err: 'An error occurred' }
+    });
+  }
+};
+*/ 
 
 module.exports = tiApiController;
