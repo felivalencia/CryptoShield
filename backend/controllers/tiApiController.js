@@ -81,7 +81,7 @@ tiApiController.completeCoinMiddleware = async (req, res, next) => {
 // middleware to retrieve complete data for 2 coins from TI API when coin IDs are input through the front end
 tiApiController.completeCoinMiddleware = async (req, res, next) => {
   // destructure ids from req.params
-  const { id1, id2 } = req.params; // Assuming the route is /compare/:id1/:id2
+  const { id1, id2 } = req.params; 
 
   // fetch data
   const fetchCoinData = async (id) => {
@@ -149,8 +149,8 @@ tiApiController.historyCoinMiddleware = async (req, res, next) => { // rename va
 /*
 // middleware to fetch historical price data for multiple coins from TI API when coin IDs are input through the front end
 tiApiController.historyCoinMiddleware = async (req, res, next) => {
-  const { id1, id2 } = req.params; // Assuming the route is /compare/:id1/:id2
-  const { interval, length } = req.query; // Get interval and length from query parameters
+  const { id1, id2 } = req.params; // 
+  const { interval, length } = req.query; // get interval and length from query parameters
 
   // Utility function to fetch historical data
   const fetchCoinHistory = async (id) => {
